@@ -1,0 +1,16 @@
+python3.6
+pipenv
+docker
+
+pytest
+
+vue
+typescript
+yarn?
+
+scss
+boostrap (lub coś podobnego)
+
+django 2
+
+paginacja "więcej" (automatyczne ładowanie może)
