@@ -10,32 +10,29 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-import os
+from pathlib import Path
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
+SECRET_FILE = BASE_DIR / 'secret.txt'
 try:
-    SECRET_KEY
-except NameError:
-    SECRET_FILE = os.path.join(PROJECT_PATH, 'secret.txt')
+    SECRET_KEY = open(SECRET_FILE).read().strip()
+except IOError:
     try:
-        SECRET_KEY = open(SECRET_FILE).read().strip()
+        import random
+        SECRET_KEY = ''.join(random.choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)')
+                             for i in range(50))
+        secret = open(SECRET_FILE, 'w')
+        secret.write(SECRET_KEY)
+        secret.close()
+        del secret
     except IOError:
-        try:
-            import random
-            SECRET_KEY = ''.join(random.choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)')
-                                 for i in range(50))
-            secret = file(SECRET_FILE, 'w')
-            secret.write(SECRET_KEY)
-            secret.close()
-        except IOError:
-            Exception('Please create a %s file with random characters \
-            to generate your secret key!' % SECRET_FILE)
+        Exception('Please create a %s file with random characters \
+        to generate your secret key!' % SECRET_FILE)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -91,7 +88,7 @@ WSGI_APPLICATION = 'krasul.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': str(BASE_DIR / 'db.sqlite3'),
     }
 }
 
