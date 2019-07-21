@@ -1,3 +1,7 @@
 *.pyc
 
 .idea
+
+db.sqlite3
+
+.envrc
