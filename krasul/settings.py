@@ -19,12 +19,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-SECRET_KEY = os.environ['SECRET_KEY']
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+if DEBUG:
+    SECRET_KEY = 'ble'
+else:
+    SECRET_KEY = os.environ['SECRET_KEY']
+
+ALLOWED_HOSTS = ['krasul.local']
 
 
 # Application definition
@@ -37,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'graphene_django',
+    'krasul.krasul',
     'krasul.crosswords',
 ]
 
@@ -121,5 +125,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 GRAPHENE = {
-    'SCHEMA': 'krasul.schema.schema',
+    'SCHEMA': 'krasul.krasul.schema.schema',
 }
