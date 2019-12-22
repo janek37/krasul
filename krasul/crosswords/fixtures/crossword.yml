@@ -1,0 +1,341 @@
+- model: crosswords.crossword
+  pk: 1
+  fields:
+    width: 4
+    height: 4
+- model: crosswords.square
+  pk: 1
+  fields:
+    crossword: 1
+    x: 0
+    y: 0
+    solution: a
+- model: crosswords.square
+  pk: 2
+  fields:
+    crossword: 1
+    x: 0
+    y: 1
+    solution: a
+- model: crosswords.square
+  pk: 3
+  fields:
+    crossword: 1
+    x: 0
+    y: 2
+    solution: a
+- model: crosswords.square
+  pk: 4
+  fields:
+    crossword: 1
+    x: 0
+    y: 3
+    solution: a
+- model: crosswords.square
+  pk: 5
+  fields:
+    crossword: 1
+    x: 1
+    y: 0
+    solution: a
+- model: crosswords.square
+  pk: 6
+  fields:
+    crossword: 1
+    x: 1
+    y: 1
+    solution: a
+- model: crosswords.square
+  pk: 7
+  fields:
+    crossword: 1
+    x: 1
+    y: 2
+    solution: a
+- model: crosswords.square
+  pk: 8
+  fields:
+    crossword: 1
+    x: 1
+    y: 3
+    solution: a
+- model: crosswords.square
+  pk: 9
+  fields:
+    crossword: 1
+    x: 2
+    y: 0
+    solution: a
+- model: crosswords.square
+  pk: 10
+  fields:
+    crossword: 1
+    x: 2
+    y: 1
+    solution: a
+- model: crosswords.square
+  pk: 11
+  fields:
+    crossword: 1
+    x: 2
+    y: 2
+    solution: a
+- model: crosswords.square
+  pk: 12
+  fields:
+    crossword: 1
+    x: 2
+    y: 3
+    solution: a
+- model: crosswords.square
+  pk: 13
+  fields:
+    crossword: 1
+    x: 3
+    y: 0
+    solution: a
+- model: crosswords.square
+  pk: 14
+  fields:
+    crossword: 1
+    x: 3
+    y: 1
+    solution: a
+- model: crosswords.square
+  pk: 15
+  fields:
+    crossword: 1
+    x: 3
+    y: 2
+    solution: a
+- model: crosswords.square
+  pk: 16
+  fields:
+    crossword: 1
+    x: 3
+    y: 3
+    solution: a
+- model: crosswords.entry
+  pk: 1
+  fields:
+    clue: aaaa
+- model: crosswords.entry
+  pk: 2
+  fields:
+    clue: aaaa
+- model: crosswords.entry
+  pk: 3
+  fields:
+    clue: aaaa
+- model: crosswords.entry
+  pk: 4
+  fields:
+    clue: aaaa
+- model: crosswords.entry
+  pk: 5
+  fields:
+    clue: aaaa
+- model: crosswords.entry
+  pk: 6
+  fields:
+    clue: aaaa
+- model: crosswords.entry
+  pk: 7
+  fields:
+    clue: aaaa
+- model: crosswords.entry
+  pk: 8
+  fields:
+    clue: aaaa
+- model: crosswords.entrysquare
+  pk: 1
+  fields:
+    entry: 1
+    square: 1
+    index: 0
+- model: crosswords.entrysquare
+  pk: 2
+  fields:
+    entry: 1
+    square: 2
+    index: 1
+- model: crosswords.entrysquare
+  pk: 3
+  fields:
+    entry: 1
+    square: 3
+    index: 2
+- model: crosswords.entrysquare
+  pk: 4
+  fields:
+    entry: 1
+    square: 4
+    index: 3
+- model: crosswords.entrysquare
+  pk: 5
+  fields:
+    entry: 2
+    square: 5
+    index: 0
+- model: crosswords.entrysquare
+  pk: 6
+  fields:
+    entry: 2
+    square: 6
+    index: 1
+- model: crosswords.entrysquare
+  pk: 7
+  fields:
+    entry: 2
+    square: 7
+    index: 2
+- model: crosswords.entrysquare
+  pk: 8
+  fields:
+    entry: 2
+    square: 8
+    index: 3
+- model: crosswords.entrysquare
+  pk: 9
+  fields:
+    entry: 3
+    square: 9
+    index: 0
+- model: crosswords.entrysquare
+  pk: 10
+  fields:
+    entry: 3
+    square: 10
+    index: 1
+- model: crosswords.entrysquare
+  pk: 11
+  fields:
+    entry: 3
+    square: 11
+    index: 2
+- model: crosswords.entrysquare
+  pk: 12
+  fields:
+    entry: 3
+    square: 12
+    index: 3
+- model: crosswords.entrysquare
+  pk: 13
+  fields:
+    entry: 4
+    square: 13
+    index: 0
+- model: crosswords.entrysquare
+  pk: 14
+  fields:
+    entry: 4
+    square: 14
+    index: 1
+- model: crosswords.entrysquare
+  pk: 15
+  fields:
+    entry: 4
+    square: 15
+    index: 2
+- model: crosswords.entrysquare
+  pk: 16
+  fields:
+    entry: 4
+    square: 16
+    index: 3
+- model: crosswords.entrysquare
+  pk: 17
+  fields:
+    entry: 5
+    square: 1
+    index: 0
+- model: crosswords.entrysquare
+  pk: 18
+  fields:
+    entry: 5
+    square: 5
+    index: 1
+- model: crosswords.entrysquare
+  pk: 19
+  fields:
+    entry: 5
+    square: 9
+    index: 2
+- model: crosswords.entrysquare
+  pk: 20
+  fields:
+    entry: 5
+    square: 13
+    index: 3
+- model: crosswords.entrysquare
+  pk: 21
+  fields:
+    entry: 6
+    square: 2
+    index: 0
+- model: crosswords.entrysquare
+  pk: 22
+  fields:
+    entry: 6
+    square: 6
+    index: 1
+- model: crosswords.entrysquare
+  pk: 23
+  fields:
+    entry: 6
+    square: 10
+    index: 2
+- model: crosswords.entrysquare
+  pk: 24
+  fields:
+    entry: 6
+    square: 14
+    index: 3
+- model: crosswords.entrysquare
+  pk: 25
+  fields:
+    entry: 7
+    square: 3
+    index: 0
+- model: crosswords.entrysquare
+  pk: 26
+  fields:
+    entry: 7
+    square: 7
+    index: 1
+- model: crosswords.entrysquare
+  pk: 27
+  fields:
+    entry: 7
+    square: 11
+    index: 2
+- model: crosswords.entrysquare
+  pk: 28
+  fields:
+    entry: 7
+    square: 15
+    index: 3
+- model: crosswords.entrysquare
+  pk: 29
+  fields:
+    entry: 8
+    square: 4
+    index: 0
+- model: crosswords.entrysquare
+  pk: 30
+  fields:
+    entry: 8
+    square: 8
+    index: 1
+- model: crosswords.entrysquare
+  pk: 31
+  fields:
+    entry: 8
+    square: 12
+    index: 2
+- model: crosswords.entrysquare
+  pk: 32
+  fields:
+    entry: 8
+    square: 16
+    index: 3
