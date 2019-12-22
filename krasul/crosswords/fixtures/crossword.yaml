@@ -118,34 +118,42 @@
 - model: crosswords.entry
   pk: 1
   fields:
+    crossword_id: 1
     clue: aaaa
 - model: crosswords.entry
   pk: 2
   fields:
+    crossword_id: 1
     clue: aaaa
 - model: crosswords.entry
   pk: 3
   fields:
+    crossword_id: 1
     clue: aaaa
 - model: crosswords.entry
   pk: 4
   fields:
+    crossword_id: 1
     clue: aaaa
 - model: crosswords.entry
   pk: 5
   fields:
+    crossword_id: 1
     clue: aaaa
 - model: crosswords.entry
   pk: 6
   fields:
+    crossword_id: 1
     clue: aaaa
 - model: crosswords.entry
   pk: 7
   fields:
+    crossword_id: 1
     clue: aaaa
 - model: crosswords.entry
   pk: 8
   fields:
+    crossword_id: 1
     clue: aaaa
 - model: crosswords.entrysquare
   pk: 1

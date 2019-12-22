@@ -7,7 +7,7 @@ class Crossword(models.Model):
 
 
 class Square(models.Model):
-    crossword = models.ForeignKey(Crossword, on_delete=models.CASCADE)
+    crossword = models.ForeignKey(Crossword, on_delete=models.CASCADE, related_name='squares')
     x = models.IntegerField()
     y = models.IntegerField()
     solution = models.CharField(max_length=4, blank=True)
@@ -17,6 +17,7 @@ class Square(models.Model):
 
 
 class Entry(models.Model):
+    crossword = models.ForeignKey(Crossword, on_delete=models.CASCADE, related_name='entries')
     squares = models.ManyToManyField(Square, through='EntrySquare')
     clue = models.TextField()
 
