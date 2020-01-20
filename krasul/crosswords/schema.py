@@ -23,8 +23,11 @@ class EntryType(DjangoObjectType):
 
 
 class Query(graphene.ObjectType):
-    crosswords = graphene.List(CrosswordType)
+    crosswords = graphene.List(CrosswordType, id=graphene.Int())
 
     @staticmethod
-    def resolve_crosswords(parent, info, **kwargs):
-        return Crossword.objects.all()
+    def resolve_crosswords(parent, info, id, **kwargs):
+        crosswords = Crossword.objects.all()
+        if id:
+            crosswords = crosswords.filter(id=id)
+        return crosswords
