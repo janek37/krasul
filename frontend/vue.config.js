@@ -21,7 +21,7 @@ module.exports = {
     productionSourceMap: false,
     publicPath: process.env.NODE_ENV === 'production'
         ? ''
-        : 'http://localhost:8080/',
+        : 'http://krasul.local:8080/',
     outputDir: '../krasul/static/vue/',
 
     chainWebpack: config => {
@@ -52,8 +52,8 @@ module.exports = {
             .set('__STATIC__', 'static');
 
         config.devServer
-            .public('http://localhost:8080')
-            .host('localhost')
+            .public('http://krasul.local:8080')
+            .host('krasul.local')
             .port(8080)
             .hotOnly(true)
             .watchOptions({poll: 1000})
