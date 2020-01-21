@@ -4,9 +4,9 @@
 
 <script>
 export default {
-  name: "Crossword",
+  name: "CrosswordDiagram",
   props: {
-    id: String
+    id: Number
   },
   data() {
     return {
@@ -23,7 +23,7 @@ export default {
         params: {
           query: `
             {
-              crosswords(id: ${parseInt(this.id)}) {
+              crosswords(id: ${this.id}) {
                 height
                 width
                 squares {

@@ -1,16 +1,16 @@
 <template>
   <div id="crossword">
-    <Crossword id="1" />
+    <CrosswordDiagram :id="1" />
   </div>
 </template>
 
 <script>
-import Crossword from "./components/Crossword.vue";
+import CrosswordDiagram from "./components/CrosswordDiagram.vue";
 
 export default {
-  name: "crossword",
+  name: "app",
   components: {
-    Crossword
+    CrosswordDiagram
   }
 };
 </script>
