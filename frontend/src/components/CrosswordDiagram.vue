@@ -1,22 +1,46 @@
 <template>
-  <span>{{ crosswordData }}</span>
+  <div :style="styleObject" class="diagram">
+    <CrosswordDiagramSquare
+      :square-data="squareData"
+      :size="squareSize"
+      :active="squareData['id'] === activeSquare['id']"
+      v-for="squareData in crosswordData['squares']"
+      :key="squareData['id']"
+      @focus="setFocus(squareData)"
+    />
+  </div>
 </template>
 
 <script>
+import CrosswordDiagramSquare from "./CrosswordDiagramSquare";
 export default {
   name: "CrosswordDiagram",
+  components: { CrosswordDiagramSquare },
   props: {
     id: Number
   },
   data() {
     return {
-      crosswordData: {}
+      crosswordData: {},
+      squareSize: 40,
+      activeSquare: {}
     };
+  },
+  computed: {
+    styleObject() {
+      return {
+        width: this.crosswordData.width * this.squareSize + 1,
+        height: this.crosswordData.height * this.squareSize + 1
+      };
+    }
   },
   mounted() {
     this.getCrosswordData();
   },
   methods: {
+    setFocus(squareData) {
+      this.activeSquare = squareData;
+    },
     getCrosswordData() {
       let apiUrl = "/graphql/";
       let config = {
@@ -51,4 +75,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.diagram {
+  border: solid black 1px;
+  position: relative;
+}
+</style>
