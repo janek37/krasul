@@ -1,5 +1,5 @@
 <template>
-  <div :style="styleObject" class="diagram">
+  <div :style="styleObject" class="diagram" v-click-outside="setFocus">
     <CrosswordDiagramSquare
       :square-data="squareData"
       :size="squareSize"
@@ -13,6 +13,7 @@
 
 <script>
 import CrosswordDiagramSquare from "./CrosswordDiagramSquare";
+import ClickOutside from "vue-click-outside";
 export default {
   name: "CrosswordDiagram",
   components: { CrosswordDiagramSquare },
@@ -71,6 +72,9 @@ export default {
         this.crosswordData = response.data["data"]["crosswords"][0];
       });
     }
+  },
+  directives: {
+    ClickOutside
   }
 };
 </script>

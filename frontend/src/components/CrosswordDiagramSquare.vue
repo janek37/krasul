@@ -2,7 +2,7 @@
   <div
     :style="styleObject"
     class="square"
-    :class="{ active: active}"
+    :class="{ active: active }"
     @click="$emit('focus')"
   >
     {{ squareData["value"] }}
