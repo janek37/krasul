@@ -28,7 +28,8 @@ export default {
       crosswordData: {},
       squareSize: 40,
       activeSquare: {},
-      activeEntryIndex: 0
+      activeEntryIndex: 0,
+      squaresById: {}
     };
   },
   computed: {
@@ -43,13 +44,6 @@ export default {
     },
     entries() {
       return this.crosswordData.entries;
-    },
-    squareIndex() {
-      const index = {};
-      for (let square of this.squares) {
-        index[square.id] = square;
-      }
-      return index;
     },
     activeEntry() {
       if (!this.activeSquare.entries) return false;
@@ -111,13 +105,19 @@ export default {
       };
       return this.$http.get(apiUrl, config).then(response => {
         this.crosswordData = response.data["data"]["crosswords"][0];
+        this.updateSquaresById();
         this.updateEntries();
       });
+    },
+    updateSquaresById() {
+      for (let square of this.squares) {
+        this.squaresById[square.id] = square;
+      }
     },
     updateEntries() {
       for (let entry of this.entries) {
         for (let squareId of entry.squares) {
-          let square = this.squareIndex[squareId.id];
+          let square = this.squaresById[squareId.id];
           if (!square.entries) {
             Vue.set(square, "entries", []);
           }
@@ -137,7 +137,7 @@ export default {
         if (e.key >= "a" && e.key <= "z") {
           Vue.set(this.activeSquare, "value", e.key);
           if (this.indexInEntry < this.activeEntry.squares.length - 1) {
-            this.activeSquare = this.squareIndex[
+            this.activeSquare = this.squaresById[
               this.activeEntry.squares[this.indexInEntry + 1].id
             ];
           }
