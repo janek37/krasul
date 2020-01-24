@@ -155,5 +155,6 @@ export default {
 .diagram {
   border: solid black 1px;
   position: relative;
+  user-select: none;
 }
 </style>
