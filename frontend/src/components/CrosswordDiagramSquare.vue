@@ -2,7 +2,7 @@
   <div
     :style="styleObject"
     class="square"
-    :class="{ active: active }"
+    :class="{ active: active, 'active-entry': activeEntry && !active }"
     @click="$emit('focus')"
   >
     {{ squareData["value"] }}
@@ -15,13 +15,12 @@ export default {
   props: {
     squareData: Object,
     size: Number,
-    active: Boolean
+    active: Boolean,
+    activeEntry: Boolean
   },
   computed: {
     styleObject() {
       return {
-        boxSizing: "border-box",
-        border: "solid black 1px",
         fontSize: this.size * 0.6,
         width: this.size + 1,
         height: this.size + 1,
@@ -36,8 +35,13 @@ export default {
 <style scoped>
 .square {
   position: absolute;
+  box-sizing: border-box;
+  border: solid black 1px;
 }
 .active {
+  background-color: dodgerblue;
+}
+.active-entry {
   background-color: lightblue;
 }
 </style>
