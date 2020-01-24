@@ -54,10 +54,20 @@ export default {
     activeEntry() {
       if (!this.activeSquare.entries) return false;
       return this.activeSquare.entries[this.activeEntryIndex];
+    },
+    indexInEntry() {
+      if (!this.activeSquare.id) return -1;
+      for (let i = 0; i < this.activeEntry.squares.length; i++) {
+        if (this.activeEntry.squares[i].id === this.activeSquare.id) {
+          return i;
+        }
+      }
+      return -1;
     }
   },
   mounted() {
     this.getCrosswordData();
+    window.addEventListener("keydown", this.keyHandler);
   },
   methods: {
     setFocus(squareData) {
@@ -122,6 +132,18 @@ export default {
         }
       return false;
     },
+    keyHandler(e) {
+      if (this.activeSquare && this.activeSquare.id) {
+        if (e.key >= "a" && e.key <= "z") {
+          Vue.set(this.activeSquare, "value", e.key);
+          if (this.indexInEntry < this.activeEntry.squares.length - 1) {
+            this.activeSquare = this.squareIndex[
+              this.activeEntry.squares[this.indexInEntry + 1].id
+            ];
+          }
+        }
+      }
+    }
   },
   directives: {
     ClickOutside
