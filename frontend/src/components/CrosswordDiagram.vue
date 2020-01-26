@@ -33,14 +33,27 @@ export default {
     };
   },
   computed: {
+    width() {
+      return this.crosswordData.width;
+    },
+    height() {
+      return this.crosswordData.height;
+    },
     styleObject() {
       return {
-        width: this.crosswordData.width * this.squareSize + 1,
-        height: this.crosswordData.height * this.squareSize + 1
+        width: this.width * this.squareSize + 1,
+        height: this.height * this.squareSize + 1
       };
     },
     squares() {
       return this.crosswordData.squares;
+    },
+    squaresTable() {
+      const table = Array.from(Array(this.width), () => new Array(this.height));
+      for (let square of this.squares) {
+        table[square.x][square.y] = square;
+      }
+      return table;
     },
     entries() {
       return this.crosswordData.entries;
@@ -133,7 +146,9 @@ export default {
       return false;
     },
     keyHandler(e) {
-      if (this.activeSquare && this.activeSquare.id) {
+      if (this.activeSquare.id) {
+        console.log(e.key);
+        console.log(e);
         if (e.key >= "a" && e.key <= "z") {
           Vue.set(this.activeSquare, "value", e.key);
           if (this.indexInEntry < this.activeEntry.squares.length - 1) {
@@ -141,6 +156,22 @@ export default {
               this.activeEntry.squares[this.indexInEntry + 1].id
             ];
           }
+        }
+        if (e.key === "ArrowUp") this.move(0, -1);
+        if (e.key === "ArrowDown") this.move(0, 1);
+        if (e.key === "ArrowLeft") this.move(-1, 0);
+        if (e.key === "ArrowRight") this.move(1, 0);
+      }
+    },
+    move(dx, dy) {
+      for (
+        let x = this.activeSquare.x + dx, y = this.activeSquare.y + dy;
+        x >= 0 && y >= 0 && x < this.width && y < this.height;
+        x += dx, y += dy
+      ) {
+        if (this.squaresTable[x][y]) {
+          this.activeSquare = this.squaresTable[x][y];
+          break;
         }
       }
     }
