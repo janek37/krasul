@@ -175,9 +175,31 @@ export default {
       if (this.activeSquare.id) {
         console.log(e.key);
         console.log(e);
-        if (e.key >= "a" && e.key <= "z") {
+        if (e.key.length === 1 && e.key.toUpperCase() !== e.key.toLowerCase()) {
           this.setActiveValue(e.key);
           this.moveInEntry(1);
+        }
+        if (e.key === "Backspace") {
+          if (this.getValue(this.activeSquare).length === 0) {
+            this.moveInEntry(-1);
+          }
+          this.setActiveValue("");
+        }
+        if (e.key === "Delete") {
+          this.setActiveValue("");
+        }
+        if (e.key === " ") {
+          this.setActiveValue("");
+          this.moveInEntry(1);
+        }
+        if (e.key === "Enter") {
+          this.cycleEntry();
+        }
+        if (e.key === "Home") {
+          this.moveToEntryIndex(0);
+        }
+        if (e.key === "End") {
+          this.moveToEntryIndex(-1);
         }
         if (e.key === "ArrowUp") this.move(0, -1);
         if (e.key === "ArrowDown") this.move(0, 1);
@@ -199,10 +221,12 @@ export default {
         this.indexInEntry + offset < this.activeEntry.length &&
         this.indexInEntry + offset >= 0
       ) {
-        this.moveToSquare(
-          this.squaresById[this.activeEntry[this.indexInEntry + offset]]
-        );
+        this.moveToEntryIndex(this.indexInEntry + offset);
       }
+    },
+    moveToEntryIndex(index) {
+      if (index < 0) index += this.activeEntry.length;
+      this.moveToSquare(this.squaresById[this.activeEntry[index]]);
     },
     move(dx, dy) {
       for (
