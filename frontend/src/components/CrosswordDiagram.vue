@@ -187,5 +187,6 @@ export default {
   border: solid black 1px;
   position: relative;
   user-select: none;
+  text-transform: uppercase;
 }
 </style>
