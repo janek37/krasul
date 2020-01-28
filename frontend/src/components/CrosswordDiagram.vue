@@ -29,11 +29,13 @@ export default {
   name: "CrosswordDiagram",
   components: { CrosswordDiagramSquare, CrosswordDiagramSquareBlank },
   props: {
-    id: Number
+    width: Number,
+    height: Number,
+    rawSquares: Array,
+    rawEntries: Array
   },
   data() {
     return {
-      crosswordData: {},
       squareSize: 40,
       activeSquare: {},
       activeEntryIndex: 0,
@@ -41,12 +43,6 @@ export default {
     };
   },
   computed: {
-    width() {
-      return this.crosswordData.width;
-    },
-    height() {
-      return this.crosswordData.height;
-    },
     styleObject() {
       if (!this.width) return {};
       return {
@@ -55,9 +51,9 @@ export default {
       };
     },
     squares() {
-      if (!this.crosswordData.squares) return [];
+      if (!this.rawSquares) return [];
       const squares = [];
-      for (let square of this.crosswordData.squares) {
+      for (let square of this.rawSquares) {
         squares.push({ x: square.x, y: square.y, id: square.id });
       }
       const squaresById = {};
@@ -100,7 +96,7 @@ export default {
     },
     entries() {
       const entries = [];
-      for (let entry of this.crosswordData.entries) {
+      for (let entry of this.rawEntries) {
         const squareIds = [];
         for (let entrySquare of entry.squares) {
           squareIds.push(entrySquare.id);
@@ -119,7 +115,6 @@ export default {
     }
   },
   mounted() {
-    this.getCrosswordData();
     window.addEventListener("keydown", this.keyHandler);
   },
   methods: {
@@ -137,44 +132,12 @@ export default {
       this.activeEntryIndex =
         (this.activeEntryIndex + 1) % this.activeSquare.entries.length;
     },
-    getCrosswordData() {
-      let apiUrl = "/graphql/";
-      let config = {
-        params: {
-          query: `
-            {
-              crosswords(id: ${this.id}) {
-                height
-                width
-                squares {
-                  x
-                  y
-                  solution
-                  id
-                }
-                entries {
-                  clue
-                  squares {
-                    id
-                  }
-                }
-              }
-            }
-          `
-        }
-      };
-      return this.$http.get(apiUrl, config).then(response => {
-        this.crosswordData = response.data["data"]["crosswords"][0];
-      });
-    },
     isActiveEntry(square) {
       if (this.activeEntry) return this.activeEntry.includes(square.id);
       return false;
     },
     keyHandler(e) {
       if (this.activeSquare.id) {
-        console.log(e.key);
-        console.log(e);
         if (e.key.length === 1 && e.key.toUpperCase() !== e.key.toLowerCase()) {
           this.setActiveValue(e.key);
           this.moveInEntry(1);
