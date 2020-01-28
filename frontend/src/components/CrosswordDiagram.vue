@@ -56,7 +56,15 @@ export default {
       return table;
     },
     entries() {
-      return this.crosswordData.entries;
+      const entries = [];
+      for (let entry of this.crosswordData.entries) {
+        const squares = [];
+        for (let entrySquare of entry.squares) {
+          squares.push(this.squaresById[entrySquare.id]);
+        }
+        entries.push(squares);
+      }
+      return entries;
     },
     activeEntry() {
       if (!this.activeSquare.entries) return false;
@@ -64,12 +72,7 @@ export default {
     },
     indexInEntry() {
       if (!this.activeSquare.id) return -1;
-      for (let i = 0; i < this.activeEntry.squares.length; i++) {
-        if (this.activeEntry.squares[i].id === this.activeSquare.id) {
-          return i;
-        }
-      }
-      return -1;
+      return this.activeEntry.indexOf(this.activeSquare);
     }
   },
   mounted() {
@@ -129,8 +132,7 @@ export default {
     },
     updateEntries() {
       for (let entry of this.entries) {
-        for (let squareId of entry.squares) {
-          let square = this.squaresById[squareId.id];
+        for (let square of entry) {
           if (!square.entries) {
             Vue.set(square, "entries", []);
           }
@@ -139,10 +141,7 @@ export default {
       }
     },
     isActiveEntry(square) {
-      if (this.activeEntry)
-        for (let squareId of this.activeEntry.squares) {
-          if (squareId.id === square.id) return true;
-        }
+      if (this.activeEntry) return this.activeEntry.includes(square);
       return false;
     },
     keyHandler(e) {
@@ -151,9 +150,9 @@ export default {
         console.log(e);
         if (e.key >= "a" && e.key <= "z") {
           Vue.set(this.activeSquare, "value", e.key);
-          if (this.indexInEntry < this.activeEntry.squares.length - 1) {
+          if (this.indexInEntry < this.activeEntry.length - 1) {
             this.activeSquare = this.squaresById[
-              this.activeEntry.squares[this.indexInEntry + 1].id
+              this.activeEntry[this.indexInEntry + 1].id
             ];
           }
         }
