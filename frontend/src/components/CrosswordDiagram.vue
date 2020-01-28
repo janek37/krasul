@@ -232,10 +232,10 @@ export default {
               return;
             }
           }
-          if (this.activeEntryIndex >= this.activeSquare.entries.length) {
-            this.activeEntryIndex = 0;
-          }
         }
+      }
+      if (this.activeEntryIndex >= this.activeSquare.entries.length) {
+        this.activeEntryIndex = 0;
       }
     },
     setEntry(entry) {
