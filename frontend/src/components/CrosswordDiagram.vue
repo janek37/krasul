@@ -56,7 +56,7 @@ export default {
       if (!this.crosswordData.squares) return [];
       const squares = [];
       for (let square of this.crosswordData.squares) {
-        squares.push({ x: square.x, y: square.y, id: square.id });
+        squares.push({ x: square.x, y: square.y, id: square.id, value: "" });
       }
       const squaresById = {};
       for (let square of squares) {
@@ -175,9 +175,9 @@ export default {
         if (e.key >= "a" && e.key <= "z") {
           Vue.set(this.activeSquare, "value", e.key);
           if (this.indexInEntry < this.activeEntry.length - 1) {
-            this.activeSquare = this.squaresById[
-              this.activeEntry[this.indexInEntry + 1]
-            ];
+            this.moveToSquare(
+              this.squaresById[this.activeEntry[this.indexInEntry + 1]]
+            );
           }
         }
         if (e.key === "ArrowUp") this.move(0, -1);
@@ -193,10 +193,38 @@ export default {
         x += dx, y += dy
       ) {
         if (this.squaresTable[x][y]) {
-          this.activeSquare = this.squaresTable[x][y];
+          this.moveToSquare(this.squaresTable[x][y]);
           break;
         }
       }
+    },
+    moveToSquare(square) {
+      let entry = null;
+      let oldSquare = null;
+      if (this.activeSquare) {
+        oldSquare = this.activeSquare;
+        entry = this.activeEntry;
+      }
+      this.activeSquare = square;
+      if (entry) {
+        if (!this.setEntry(entry)) {
+          for (let entry of this.activeSquare.entries) {
+            if (entry.includes(oldSquare.id)) {
+              this.setEntry(entry);
+              break;
+            }
+          }
+        }
+      }
+    },
+    setEntry(entry) {
+      for (let i = 0; i < this.activeSquare.entries.length; i++) {
+        if (this.activeSquare.entries[i] === entry) {
+          this.activeEntryIndex = i;
+          return true;
+        }
+      }
+      return false;
     }
   },
   directives: {
