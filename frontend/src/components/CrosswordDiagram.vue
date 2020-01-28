@@ -9,17 +9,24 @@
       :key="squareData.id"
       @focus="setFocus(squareData)"
     />
+    <CrosswordDiagramSquareBlank
+      :square-data="squareData"
+      :size="squareSize"
+      v-for="squareData in blankSquares"
+      :key="squareData.x + ',' + squareData.y"
+    />
   </div>
 </template>
 
 <script>
 import Vue from "vue";
 import CrosswordDiagramSquare from "./CrosswordDiagramSquare";
+import CrosswordDiagramSquareBlank from "./CrosswordDiagramSquareBlank";
 import ClickOutside from "vue-click-outside";
 
 export default {
   name: "CrosswordDiagram",
-  components: { CrosswordDiagramSquare },
+  components: { CrosswordDiagramSquare, CrosswordDiagramSquareBlank },
   props: {
     id: Number
   },
@@ -77,6 +84,15 @@ export default {
         table[square.x][square.y] = square;
       }
       return table;
+    },
+    blankSquares() {
+      const blanks = [];
+      for (let x = 0; x < this.width; x++) {
+        for (let y = 0; y < this.height; y++) {
+          if (!this.squaresTable[x][y]) blanks.push({ x: x, y: y });
+        }
+      }
+      return blanks;
     },
     entries() {
       const entries = [];
