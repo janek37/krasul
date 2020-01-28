@@ -46,12 +46,14 @@ export default {
       return this.crosswordData.height;
     },
     styleObject() {
+      if (!this.width) return {};
       return {
         width: this.width * this.squareSize + 1,
         height: this.height * this.squareSize + 1
       };
     },
     squares() {
+      if (!this.crosswordData.squares) return [];
       const squares = [];
       for (let square of this.crosswordData.squares) {
         squares.push({ x: square.x, y: square.y, id: square.id });
