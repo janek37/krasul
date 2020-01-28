@@ -5,7 +5,7 @@
     :class="{ active: active, 'active-entry': activeEntry && !active }"
     @click="$emit('focus')"
   >
-    {{ squareData["value"] }}
+    {{ value }}
   </div>
 </template>
 
@@ -14,6 +14,7 @@ export default {
   name: "CrosswordDiagramSquare",
   props: {
     squareData: Object,
+    value: String,
     size: Number,
     active: Boolean,
     activeEntry: Boolean

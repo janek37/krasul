@@ -1,13 +1,14 @@
 <template>
-  <div :style="styleObject" class="diagram" v-click-outside="setFocus">
+  <div :style="styleObject" class="diagram" v-click-outside="unfocus">
     <CrosswordDiagramSquare
-      :square-data="squareData"
+      :square-data="square"
+      :value="getValue(square)"
       :size="squareSize"
-      :active="squareData.id === activeSquare.id"
-      :active-entry="isActiveEntry(squareData)"
-      v-for="squareData in squares"
-      :key="squareData.id"
-      @focus="setFocus(squareData)"
+      :active="square === activeSquare"
+      :active-entry="isActiveEntry(square)"
+      v-for="square in squares"
+      :key="square.id"
+      @focus="setFocus(square)"
     />
     <CrosswordDiagramSquareBlank
       :square-data="squareData"
@@ -35,7 +36,8 @@ export default {
       crosswordData: {},
       squareSize: 40,
       activeSquare: {},
-      activeEntryIndex: 0
+      activeEntryIndex: 0,
+      values: {}
     };
   },
   computed: {
@@ -56,7 +58,7 @@ export default {
       if (!this.crosswordData.squares) return [];
       const squares = [];
       for (let square of this.crosswordData.squares) {
-        squares.push({ x: square.x, y: square.y, id: square.id, value: "" });
+        squares.push({ x: square.x, y: square.y, id: square.id });
       }
       const squaresById = {};
       for (let square of squares) {
@@ -121,18 +123,19 @@ export default {
     window.addEventListener("keydown", this.keyHandler);
   },
   methods: {
-    setFocus(squareData) {
-      if (squareData && this.activeSquare.id === squareData.id) {
-        this.activeEntryIndex =
-          (this.activeEntryIndex + 1) % this.activeSquare.entries.length;
-      } else if (!squareData) {
-        this.activeSquare = {};
+    setFocus(square) {
+      if (square && this.activeSquare === square) {
+        this.cycleEntry();
       } else {
-        this.activeSquare = squareData;
-        if (this.activeEntryIndex >= this.activeSquare.entries.length) {
-          this.activeEntryIndex = 0;
-        }
+        this.moveToSquare(square);
       }
+    },
+    unfocus() {
+      this.activeSquare = {};
+    },
+    cycleEntry() {
+      this.activeEntryIndex =
+        (this.activeEntryIndex + 1) % this.activeSquare.entries.length;
     },
     getCrosswordData() {
       let apiUrl = "/graphql/";
@@ -173,17 +176,32 @@ export default {
         console.log(e.key);
         console.log(e);
         if (e.key >= "a" && e.key <= "z") {
-          Vue.set(this.activeSquare, "value", e.key);
-          if (this.indexInEntry < this.activeEntry.length - 1) {
-            this.moveToSquare(
-              this.squaresById[this.activeEntry[this.indexInEntry + 1]]
-            );
-          }
+          this.setActiveValue(e.key);
+          this.moveInEntry(1);
         }
         if (e.key === "ArrowUp") this.move(0, -1);
         if (e.key === "ArrowDown") this.move(0, 1);
         if (e.key === "ArrowLeft") this.move(-1, 0);
         if (e.key === "ArrowRight") this.move(1, 0);
+      }
+    },
+    setActiveValue(value) {
+      this.setValue(this.activeSquare, value);
+    },
+    setValue(square, value) {
+      Vue.set(this.values, square.id, value);
+    },
+    getValue(square) {
+      return this.values[square.id] || "";
+    },
+    moveInEntry(offset) {
+      if (
+        this.indexInEntry + offset < this.activeEntry.length &&
+        this.indexInEntry + offset >= 0
+      ) {
+        this.moveToSquare(
+          this.squaresById[this.activeEntry[this.indexInEntry + offset]]
+        );
       }
     },
     move(dx, dy) {
@@ -211,8 +229,11 @@ export default {
           for (let entry of this.activeSquare.entries) {
             if (entry.includes(oldSquare.id)) {
               this.setEntry(entry);
-              break;
+              return;
             }
+          }
+          if (this.activeEntryIndex >= this.activeSquare.entries.length) {
+            this.activeEntryIndex = 0;
           }
         }
       }
