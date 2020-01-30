@@ -16,6 +16,7 @@
       v-for="squareData in blankSquares"
       :key="squareData.x + ',' + squareData.y"
     />
+    <div class="clue">{{ activeEntry["clue"] }}</div>
   </div>
 </template>
 
@@ -61,7 +62,7 @@ export default {
         squaresById[square.id] = square;
       }
       for (let entry of this.entries) {
-        for (let squareId of entry) {
+        for (let squareId of entry.squareIds) {
           const square = squaresById[squareId];
           if (!square.entries) {
             Vue.set(square, "entries", []);
@@ -101,7 +102,7 @@ export default {
         for (let entrySquare of entry.squares) {
           squareIds.push(entrySquare.id);
         }
-        entries.push(squareIds);
+        entries.push({ clue: entry.clue, squareIds: squareIds });
       }
       return entries;
     },
@@ -111,7 +112,7 @@ export default {
     },
     indexInEntry() {
       if (!this.activeSquare.id) return -1;
-      return this.activeEntry.indexOf(this.activeSquare.id);
+      return this.activeEntry.squareIds.indexOf(this.activeSquare.id);
     }
   },
   mounted() {
@@ -133,7 +134,8 @@ export default {
         (this.activeEntryIndex + 1) % this.activeSquare.entries.length;
     },
     isActiveEntry(square) {
-      if (this.activeEntry) return this.activeEntry.includes(square.id);
+      if (this.activeEntry)
+        return this.activeEntry.squareIds.includes(square.id);
       return false;
     },
     keyHandler(e) {
@@ -181,15 +183,15 @@ export default {
     },
     moveInEntry(offset) {
       if (
-        this.indexInEntry + offset < this.activeEntry.length &&
+        this.indexInEntry + offset < this.activeEntry.squareIds.length &&
         this.indexInEntry + offset >= 0
       ) {
         this.moveToEntryIndex(this.indexInEntry + offset);
       }
     },
     moveToEntryIndex(index) {
-      if (index < 0) index += this.activeEntry.length;
-      this.moveToSquare(this.squaresById[this.activeEntry[index]]);
+      if (index < 0) index += this.activeEntry.squareIds.length;
+      this.moveToSquare(this.squaresById[this.activeEntry.squareIds[index]]);
     },
     move(dx, dy) {
       for (
@@ -214,7 +216,7 @@ export default {
       if (entry) {
         if (!this.setEntry(entry)) {
           for (let entry of this.activeSquare.entries) {
-            if (entry.includes(oldSquare.id)) {
+            if (entry.squareIds.includes(oldSquare.id)) {
               this.setEntry(entry);
               return;
             }
@@ -246,6 +248,9 @@ export default {
   border: solid black 1px;
   position: relative;
   user-select: none;
-  text-transform: uppercase;
+}
+.clue {
+  position: absolute;
+  bottom: -30px;
 }
 </style>

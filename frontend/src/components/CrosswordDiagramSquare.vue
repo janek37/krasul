@@ -38,6 +38,7 @@ export default {
   position: absolute;
   box-sizing: border-box;
   border: solid black 1px;
+  text-transform: uppercase;
 }
 .active {
   background-color: dodgerblue;
