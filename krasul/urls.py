@@ -24,6 +24,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('graphql/', csrf_exempt(GraphQLView.as_view(graphiql=True))),
     path('', TemplateView.as_view(template_name='app01.html')),
-    path('app02/', TemplateView.as_view(template_name='app02.html')),
     path('crossword/', include(crosswords_urls))
 ]

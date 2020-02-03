@@ -5,10 +5,6 @@ const pages = {
         entry: './src/main.js',
         chunks: ['chunk-vendors']
     },
-    'vue_app_02': {
-        entry: './src/other.js',
-        chunks: ['chunk-vendors']
-    },
     'crossword': {
         entry: './src/crossword.js',
         chunks: ['chunk-vendord']
