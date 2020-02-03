@@ -139,6 +139,7 @@ export default {
       return false;
     },
     keyHandler(e) {
+      if (e.altKey || e.ctrlKey) return;
       if (this.activeSquare.id) {
         if (e.key.length === 1 && e.key.toUpperCase() !== e.key.toLowerCase()) {
           this.setActiveValue(e.key);
