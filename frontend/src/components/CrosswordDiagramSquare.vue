@@ -2,10 +2,14 @@
   <div
     :style="styleObject"
     class="square"
-    :class="{ active: active, 'active-entry': activeEntry && !active }"
+    :class="{
+      active: active,
+      'active-entry': activeEntry && !active,
+      blank: blank
+    }"
     @click="$emit('focus')"
   >
-    {{ value }}
+    {{ blank ? "" : value }}
   </div>
 </template>
 
@@ -17,7 +21,8 @@ export default {
     value: String,
     size: Number,
     active: Boolean,
-    activeEntry: Boolean
+    activeEntry: Boolean,
+    blank: Boolean
   },
   computed: {
     styleObject() {
@@ -25,6 +30,7 @@ export default {
         fontSize: this.size * 0.6,
         width: this.size + 1,
         height: this.size + 1,
+        padding: this.blank ? this.size * 0.1 : 0,
         left: this.size * this.squareData["x"],
         top: this.size * this.squareData["y"]
       };
@@ -45,5 +51,11 @@ export default {
 }
 .active-entry {
   background-color: lightblue;
+}
+.blank::before {
+  content: "";
+  height: 100%;
+  background-color: black;
+  display: block;
 }
 </style>

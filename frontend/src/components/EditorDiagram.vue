@@ -10,11 +10,12 @@
       :key="square.id"
       @focus="setFocus(square)"
     />
-    <CrosswordDiagramSquareBlank
+    <CrosswordDiagramSquare
       :square-data="squareData"
       :size="squareSize"
       v-for="squareData in blankSquares"
       :key="squareData.x + ',' + squareData.y"
+      :blank="blank"
     />
     <div class="clue">{{ activeEntry["clue"] }}</div>
   </div>
@@ -23,12 +24,11 @@
 <script>
 import Vue from "vue";
 import CrosswordDiagramSquare from "./CrosswordDiagramSquare";
-import CrosswordDiagramSquareBlank from "./CrosswordDiagramSquareBlank";
 import ClickOutside from "vue-click-outside";
 
 export default {
   name: "CrosswordDiagram",
-  components: { CrosswordDiagramSquare, CrosswordDiagramSquareBlank },
+  components: { CrosswordDiagramSquare },
   props: {
     width: Number,
     height: Number,
