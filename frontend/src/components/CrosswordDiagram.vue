@@ -117,6 +117,9 @@ export default {
   },
   mounted() {
     window.addEventListener("keydown", this.keyHandler);
+    if (localStorage.values) {
+      this.values = JSON.parse(localStorage.values);
+    }
   },
   methods: {
     setFocus(square) {
@@ -178,6 +181,7 @@ export default {
     },
     setValue(square, value) {
       Vue.set(this.values, square.id, value);
+      localStorage.values = JSON.stringify(this.values);
     },
     getValue(square) {
       return this.values[square.id] || "";
