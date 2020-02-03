@@ -9,6 +9,10 @@ const pages = {
         entry: './src/crossword.js',
         chunks: ['chunk-vendord']
     },
+    'editor': {
+        entry: './src/editor.js',
+        chunks: ['chunk-vendord']
+    }
 };
 
 module.exports = {
