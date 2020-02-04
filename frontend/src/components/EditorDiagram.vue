@@ -1,23 +1,24 @@
 <template>
   <div :style="styleObject" class="diagram" v-click-outside="unfocus">
     <CrosswordDiagramSquare
+      v-for="square in squaresById"
       :square-data="square"
       :value="getValue(square)"
       :size="squareSize"
-      :active="square === activeSquare"
+      :active="square.id === activeSquare.id"
       :active-entry="isActiveEntry(square)"
-      v-for="square in squares"
       :key="square.id"
       @focus="setFocus(square)"
+      @action="removeSquare(square)"
     />
     <CrosswordDiagramSquare
       :square-data="squareData"
       :size="squareSize"
       v-for="squareData in blankSquares"
       :key="squareData.x + ',' + squareData.y"
-      :blank="blank"
+      :blank="true"
+      @focus="addSquare(squareData.x, squareData.y)"
     />
-    <div class="clue">{{ activeEntry["clue"] }}</div>
   </div>
 </template>
 
@@ -30,17 +31,19 @@ export default {
   name: "CrosswordDiagram",
   components: { CrosswordDiagramSquare },
   props: {
-    width: Number,
-    height: Number,
-    rawSquares: Array,
-    rawEntries: Array
+    initialData: Object
   },
   data() {
     return {
+      width: 0,
+      height: 0,
       squareSize: 40,
       activeSquare: {},
       activeEntryIndex: 0,
-      values: {}
+      squaresById: {},
+      values: {},
+      clues: {},
+      nextId: 1
     };
   },
   computed: {
@@ -51,37 +54,9 @@ export default {
         height: this.height * this.squareSize + 1
       };
     },
-    squares() {
-      if (!this.rawSquares) return [];
-      const squares = [];
-      for (let square of this.rawSquares) {
-        squares.push({ x: square.x, y: square.y, id: square.id });
-      }
-      const squaresById = {};
-      for (let square of squares) {
-        squaresById[square.id] = square;
-      }
-      for (let entry of this.entries) {
-        for (let squareId of entry.squareIds) {
-          const square = squaresById[squareId];
-          if (!square.entries) {
-            Vue.set(square, "entries", []);
-          }
-          square.entries.push(entry);
-        }
-      }
-      return squares;
-    },
-    squaresById() {
-      const squaresById = {};
-      for (let square of this.squares) {
-        squaresById[square.id] = square;
-      }
-      return squaresById;
-    },
     squaresTable() {
       const table = Array.from(Array(this.width), () => new Array(this.height));
-      for (let square of this.squares) {
+      for (let square of Object.values(this.squaresById)) {
         table[square.x][square.y] = square;
       }
       return table;
@@ -95,20 +70,47 @@ export default {
       }
       return blanks;
     },
-    entries() {
-      const entries = [];
-      for (let entry of this.rawEntries) {
-        const squareIds = [];
-        for (let entrySquare of entry.squares) {
-          squareIds.push(entrySquare.id);
+    entriesBySquareId() {
+      const entriesBySquareId = {};
+      let currentEntry = [];
+
+      function setEntry() {
+        if (currentEntry.length > 1) {
+          const entry = { squareIds: currentEntry };
+          for (let squareId of currentEntry) {
+            if (!entriesBySquareId[squareId]) entriesBySquareId[squareId] = [];
+            entriesBySquareId[squareId].push(entry);
+          }
         }
-        entries.push({ clue: entry.clue, squareIds: squareIds });
+        currentEntry = [];
       }
-      return entries;
+
+      for (let x = 0; x < this.width; x++) {
+        for (let y = 0; y <= this.height; y++) {
+          if (y < this.height && this.squaresTable[x][y]) {
+            currentEntry.push(this.squaresTable[x][y].id);
+          } else {
+            setEntry();
+          }
+        }
+      }
+      for (let y = 0; y < this.height; y++) {
+        for (let x = 0; x <= this.width; x++) {
+          if (x < this.width && this.squaresTable[x][y]) {
+            currentEntry.push(this.squaresTable[x][y].id);
+          } else {
+            setEntry();
+          }
+        }
+      }
+      return entriesBySquareId;
+    },
+    activeSquareEntries() {
+      return this.entriesBySquareId[this.activeSquare.id];
     },
     activeEntry() {
-      if (!this.activeSquare.entries) return false;
-      return this.activeSquare.entries[this.activeEntryIndex];
+      if (!this.activeSquareEntries) return false;
+      return this.activeSquareEntries[this.activeEntryIndex];
     },
     indexInEntry() {
       if (!this.activeSquare.id) return -1;
@@ -117,11 +119,14 @@ export default {
   },
   mounted() {
     window.addEventListener("keydown", this.keyHandler);
-    if (localStorage.values) {
-      this.values = JSON.parse(localStorage.values);
-    }
+    this.loadInitialData();
   },
   methods: {
+    loadInitialData() {
+      this.width = this.initialData["width"];
+      this.height = this.initialData["height"];
+      // squares, entries
+    },
     setFocus(square) {
       if (square && this.activeSquare === square) {
         this.cycleEntry();
@@ -134,12 +139,21 @@ export default {
     },
     cycleEntry() {
       this.activeEntryIndex =
-        (this.activeEntryIndex + 1) % this.activeSquare.entries.length;
+        (this.activeEntryIndex + 1) % this.activeSquareEntries.length;
     },
     isActiveEntry(square) {
       if (this.activeEntry)
         return this.activeEntry.squareIds.includes(square.id);
       return false;
+    },
+    addSquare(x, y) {
+      const square = { x: x, y: y, value: "", id: this.nextId };
+      Vue.set(this.squaresById, square.id, square);
+      this.nextId++;
+      this.setFocus(square);
+    },
+    removeSquare(square) {
+      Vue.delete(this.squaresById, square.id);
     },
     keyHandler(e) {
       if (e.altKey || e.ctrlKey) return;
@@ -149,7 +163,7 @@ export default {
           this.moveInEntry(1);
         }
         if (e.key === "Backspace") {
-          if (this.getValue(this.activeSquare).length === 0) {
+          if (this.activeSquare.value === "") {
             this.moveInEntry(-1);
           }
           this.setActiveValue("");
@@ -181,7 +195,6 @@ export default {
     },
     setValue(square, value) {
       Vue.set(this.values, square.id, value);
-      localStorage.values = JSON.stringify(this.values);
     },
     getValue(square) {
       return this.values[square.id] || "";
@@ -218,23 +231,25 @@ export default {
         entry = this.activeEntry;
       }
       this.activeSquare = square;
-      if (entry) {
-        if (!this.setEntry(entry)) {
-          for (let entry of this.activeSquare.entries) {
-            if (entry.squareIds.includes(oldSquare.id)) {
-              this.setEntry(entry);
-              return;
+      if (this.activeSquareEntries) {
+        if (entry) {
+          if (!this.setEntry(entry)) {
+            for (let entry of this.activeSquareEntries) {
+              if (entry.squareIds.includes(oldSquare.id)) {
+                this.setEntry(entry);
+                return;
+              }
             }
           }
         }
-      }
-      if (this.activeEntryIndex >= this.activeSquare.entries.length) {
-        this.activeEntryIndex = 0;
+        if (this.activeEntryIndex >= this.activeSquareEntries.length) {
+          this.activeEntryIndex = 0;
+        }
       }
     },
     setEntry(entry) {
-      for (let i = 0; i < this.activeSquare.entries.length; i++) {
-        if (this.activeSquare.entries[i] === entry) {
+      for (let i = 0; i < this.activeSquareEntries.length; i++) {
+        if (this.activeSquareEntries[i] === entry) {
           this.activeEntryIndex = i;
           return true;
         }

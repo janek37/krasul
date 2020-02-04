@@ -1,6 +1,8 @@
 <template>
   <div id="editor">
-    <EditorDiagram />
+    <EditorDiagram
+      :initial-data="{ width: 7, height: 5, squares: [], entries: [] }"
+    />
   </div>
 </template>
 

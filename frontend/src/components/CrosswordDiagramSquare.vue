@@ -8,6 +8,7 @@
       blank: blank
     }"
     @click="$emit('focus')"
+    @contextmenu.prevent="$emit('action')"
   >
     {{ blank ? "" : value }}
   </div>
