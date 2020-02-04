@@ -1,19 +1,19 @@
 <template>
   <div :style="styleObject" class="diagram" v-click-outside="unfocus">
     <CrosswordDiagramSquare
+      v-for="square in squaresById"
       :square-data="square"
       :value="getValue(square)"
       :size="squareSize"
       :active="square === activeSquare"
       :active-entry="isActiveEntry(square)"
-      v-for="square in squares"
       :key="square.id"
       @focus="setFocus(square)"
     />
     <CrosswordDiagramSquare
+      v-for="squareData in blankSquares"
       :square-data="squareData"
       :size="squareSize"
-      v-for="squareData in blankSquares"
       :key="squareData.x + ',' + squareData.y"
       :blank="true"
     />
@@ -22,27 +22,30 @@
 </template>
 
 <script>
-import Vue from "vue";
 import CrosswordDiagramSquare from "./CrosswordDiagramSquare";
 import ClickOutside from "vue-click-outside";
+import CrosswordNavigation from "../mixins/CrosswordNavigation.js";
+import CrosswordInput from "../mixins/CrosswordInput.js";
 
 export default {
   name: "CrosswordDiagram",
   components: { CrosswordDiagramSquare },
+  directives: { ClickOutside },
+  mixins: [CrosswordNavigation, CrosswordInput],
+
   props: {
     width: Number,
     height: Number,
     rawSquares: Array,
     rawEntries: Array
   },
+
   data() {
     return {
-      squareSize: 40,
-      activeSquare: {},
-      activeEntryIndex: 0,
-      values: {}
+      squareSize: 40
     };
   },
+
   computed: {
     styleObject() {
       if (!this.width) return {};
@@ -51,22 +54,12 @@ export default {
         height: this.height * this.squareSize + 1
       };
     },
-    squares() {
-      return this.rawSquares;
-    },
     squaresById() {
       const squaresById = {};
-      for (let square of this.squares) {
+      for (let square of this.rawSquares) {
         squaresById[square.id] = square;
       }
       return squaresById;
-    },
-    squaresTable() {
-      const table = Array.from(Array(this.width), () => new Array(this.height));
-      for (let square of this.squares) {
-        table[square.x][square.y] = square;
-      }
-      return table;
     },
     blankSquares() {
       const blanks = [];
@@ -90,148 +83,13 @@ export default {
         }
       }
       return entriesBySquareId;
-    },
-    activeSquareEntries() {
-      return this.entriesBySquareId[this.activeSquare.id];
-    },
-    activeEntry() {
-      if (!this.activeSquareEntries) return false;
-      return this.activeSquareEntries[this.activeEntryIndex];
-    },
-    indexInEntry() {
-      if (!this.activeSquare.id) return -1;
-      return this.activeEntry.squareIds.indexOf(this.activeSquare.id);
     }
   },
+
   mounted() {
-    window.addEventListener("keydown", this.keyHandler);
     if (localStorage.values) {
       this.values = JSON.parse(localStorage.values);
     }
-  },
-  methods: {
-    setFocus(square) {
-      if (square && this.activeSquare === square) {
-        this.cycleEntry();
-      } else {
-        this.moveToSquare(square);
-      }
-    },
-    unfocus() {
-      this.activeSquare = {};
-    },
-    cycleEntry() {
-      this.activeEntryIndex =
-        (this.activeEntryIndex + 1) % this.activeSquareEntries.length;
-    },
-    isActiveEntry(square) {
-      if (this.activeEntry)
-        return this.activeEntry.squareIds.includes(square.id);
-      return false;
-    },
-    keyHandler(e) {
-      if (e.altKey || e.ctrlKey) return;
-      if (this.activeSquare.id) {
-        if (e.key.length === 1 && e.key.toUpperCase() !== e.key.toLowerCase()) {
-          this.setActiveValue(e.key);
-          this.moveInEntry(1);
-        }
-        if (e.key === "Backspace") {
-          if (this.getValue(this.activeSquare).length === 0) {
-            this.moveInEntry(-1);
-          }
-          this.setActiveValue("");
-        }
-        if (e.key === "Delete") {
-          this.setActiveValue("");
-        }
-        if (e.key === " ") {
-          this.setActiveValue("");
-          this.moveInEntry(1);
-        }
-        if (e.key === "Enter") {
-          this.cycleEntry();
-        }
-        if (e.key === "Home") {
-          this.moveToEntryIndex(0);
-        }
-        if (e.key === "End") {
-          this.moveToEntryIndex(-1);
-        }
-        if (e.key === "ArrowUp") this.move(0, -1);
-        if (e.key === "ArrowDown") this.move(0, 1);
-        if (e.key === "ArrowLeft") this.move(-1, 0);
-        if (e.key === "ArrowRight") this.move(1, 0);
-      }
-    },
-    setActiveValue(value) {
-      this.setValue(this.activeSquare, value);
-    },
-    setValue(square, value) {
-      Vue.set(this.values, square.id, value);
-      localStorage.values = JSON.stringify(this.values);
-    },
-    getValue(square) {
-      return this.values[square.id] || "";
-    },
-    moveInEntry(offset) {
-      if (
-        this.indexInEntry + offset < this.activeEntry.squareIds.length &&
-        this.indexInEntry + offset >= 0
-      ) {
-        this.moveToEntryIndex(this.indexInEntry + offset);
-      }
-    },
-    moveToEntryIndex(index) {
-      if (index < 0) index += this.activeEntry.squareIds.length;
-      this.moveToSquare(this.squaresById[this.activeEntry.squareIds[index]]);
-    },
-    move(dx, dy) {
-      for (
-        let x = this.activeSquare.x + dx, y = this.activeSquare.y + dy;
-        x >= 0 && y >= 0 && x < this.width && y < this.height;
-        x += dx, y += dy
-      ) {
-        if (this.squaresTable[x][y]) {
-          this.moveToSquare(this.squaresTable[x][y]);
-          break;
-        }
-      }
-    },
-    moveToSquare(square) {
-      let entry = null;
-      let oldSquare = null;
-      if (this.activeSquare) {
-        oldSquare = this.activeSquare;
-        entry = this.activeEntry;
-      }
-      this.activeSquare = square;
-      if (entry) {
-        if (!this.setEntry(entry)) {
-          for (let entry of this.activeSquareEntries) {
-            if (entry.squareIds.includes(oldSquare.id)) {
-              this.setEntry(entry);
-              return;
-            }
-          }
-        }
-      }
-      if (this.activeEntryIndex >= this.activeSquareEntries.length) {
-        this.activeEntryIndex = 0;
-      }
-    },
-    setEntry(entry) {
-      for (let i = 0; i < this.activeSquareEntries.length; i++) {
-        if (this.activeSquareEntries[i] === entry) {
-          this.activeEntryIndex = i;
-          return true;
-        }
-      }
-      return false;
-    }
-  },
-  directives: {
-    ClickOutside
   }
 };
 </script>
