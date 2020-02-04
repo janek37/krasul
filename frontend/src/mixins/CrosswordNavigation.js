@@ -66,19 +66,32 @@ export default {
     navigationKeyHandler(e) {
       if (e.altKey || e.ctrlKey) return;
       if (this.hasFocus) {
-        if (e.key === "Enter") {
-          this.cycleEntry();
+        switch (e.key) {
+          case "Enter":
+            this.cycleEntry();
+            break;
+          case "Home":
+            this.moveToEntryIndex(0);
+            break;
+          case "End":
+            this.moveToEntryIndex(-1);
+            break;
+          case "ArrowUp":
+            this.move(0, -1);
+            break;
+          case "ArrowDown":
+            this.move(0, 1);
+            break;
+          case "ArrowLeft":
+            this.move(-1, 0);
+            break;
+          case "ArrowRight":
+            this.move(1, 0);
+            break;
+          default:
+            return;
         }
-        if (e.key === "Home") {
-          this.moveToEntryIndex(0);
-        }
-        if (e.key === "End") {
-          this.moveToEntryIndex(-1);
-        }
-        if (e.key === "ArrowUp") this.move(0, -1);
-        if (e.key === "ArrowDown") this.move(0, 1);
-        if (e.key === "ArrowLeft") this.move(-1, 0);
-        if (e.key === "ArrowRight") this.move(1, 0);
+        e.preventDefault();
       }
     },
 
