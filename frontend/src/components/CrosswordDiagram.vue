@@ -52,25 +52,7 @@ export default {
       };
     },
     squares() {
-      if (!this.rawSquares) return [];
-      const squares = [];
-      for (let square of this.rawSquares) {
-        squares.push({ x: square.x, y: square.y, id: square.id });
-      }
-      const squaresById = {};
-      for (let square of squares) {
-        squaresById[square.id] = square;
-      }
-      for (let entry of this.entries) {
-        for (let squareId of entry.squareIds) {
-          const square = squaresById[squareId];
-          if (!square.entries) {
-            Vue.set(square, "entries", []);
-          }
-          square.entries.push(entry);
-        }
-      }
-      return squares;
+      return this.rawSquares;
     },
     squaresById() {
       const squaresById = {};
@@ -95,20 +77,26 @@ export default {
       }
       return blanks;
     },
-    entries() {
-      const entries = [];
-      for (let entry of this.rawEntries) {
+    entriesBySquareId() {
+      const entriesBySquareId = {};
+      for (let rawEntry of this.rawEntries) {
         const squareIds = [];
-        for (let entrySquare of entry.squares) {
+        const entry = { clue: rawEntry.clue, squareIds: squareIds };
+        for (let entrySquare of rawEntry.squares) {
           squareIds.push(entrySquare.id);
+          if (!entriesBySquareId[entrySquare.id])
+            entriesBySquareId[entrySquare.id] = [];
+          entriesBySquareId[entrySquare.id].push(entry);
         }
-        entries.push({ clue: entry.clue, squareIds: squareIds });
       }
-      return entries;
+      return entriesBySquareId;
+    },
+    activeSquareEntries() {
+      return this.entriesBySquareId[this.activeSquare.id];
     },
     activeEntry() {
-      if (!this.activeSquare.entries) return false;
-      return this.activeSquare.entries[this.activeEntryIndex];
+      if (!this.activeSquareEntries) return false;
+      return this.activeSquareEntries[this.activeEntryIndex];
     },
     indexInEntry() {
       if (!this.activeSquare.id) return -1;
@@ -134,7 +122,7 @@ export default {
     },
     cycleEntry() {
       this.activeEntryIndex =
-        (this.activeEntryIndex + 1) % this.activeSquare.entries.length;
+        (this.activeEntryIndex + 1) % this.activeSquareEntries.length;
     },
     isActiveEntry(square) {
       if (this.activeEntry)
@@ -220,7 +208,7 @@ export default {
       this.activeSquare = square;
       if (entry) {
         if (!this.setEntry(entry)) {
-          for (let entry of this.activeSquare.entries) {
+          for (let entry of this.activeSquareEntries) {
             if (entry.squareIds.includes(oldSquare.id)) {
               this.setEntry(entry);
               return;
@@ -228,13 +216,13 @@ export default {
           }
         }
       }
-      if (this.activeEntryIndex >= this.activeSquare.entries.length) {
+      if (this.activeEntryIndex >= this.activeSquareEntries.length) {
         this.activeEntryIndex = 0;
       }
     },
     setEntry(entry) {
-      for (let i = 0; i < this.activeSquare.entries.length; i++) {
-        if (this.activeSquare.entries[i] === entry) {
+      for (let i = 0; i < this.activeSquareEntries.length; i++) {
+        if (this.activeSquareEntries[i] === entry) {
           this.activeEntryIndex = i;
           return true;
         }
