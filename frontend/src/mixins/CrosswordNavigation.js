@@ -88,6 +88,9 @@ export default {
           case "ArrowRight":
             this.move(1, 0);
             break;
+          case "Escape":
+            this.unfocus();
+            break;
           default:
             return;
         }
