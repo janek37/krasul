@@ -36,7 +36,7 @@ export default {
     },
 
     setActiveValue(value) {
-      this.setValue(this.activeSquare, value);
+      this.setValue(this.activeSquare, value.toUpperCase());
     },
 
     setValue(square, value) {
