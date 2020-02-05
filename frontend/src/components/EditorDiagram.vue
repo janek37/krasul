@@ -1,24 +1,42 @@
 <template>
-  <div :style="styleObject" class="diagram" v-click-outside="unfocus">
-    <CrosswordDiagramSquare
-      v-for="square in squaresById"
-      :square-data="square"
-      :value="getValue(square)"
-      :size="squareSize"
-      :active="square === activeSquare"
-      :active-entry="isActiveEntry(square)"
-      :key="square.id"
-      @focus="setFocus(square)"
-      @action="removeSquare(square)"
-    />
-    <CrosswordDiagramSquare
-      v-for="squareData in blankSquares"
-      :square-data="squareData"
-      :size="squareSize"
-      :key="squareData.x + ',' + squareData.y"
-      :blank="true"
-      @focus="addSquare(squareData.x, squareData.y)"
-    />
+  <div>
+    <div :style="styleObject" class="diagram" v-click-outside="unfocus">
+      <CrosswordDiagramSquare
+        v-for="square in squaresById"
+        :square-data="square"
+        :value="getValue(square)"
+        :size="squareSize"
+        :active="square === activeSquare"
+        :active-entry="isActiveEntry(square)"
+        :key="square.id"
+        @focus="setFocus(square)"
+        @action="removeSquare(square)"
+      />
+      <CrosswordDiagramSquare
+        v-for="squareData in blankSquares"
+        :square-data="squareData"
+        :size="squareSize"
+        :key="squareData.x + ',' + squareData.y"
+        :blank="true"
+        @focus="addSquare(squareData.x, squareData.y)"
+      />
+    </div>
+    <div
+      v-for="entry in entries"
+      class="clue-input"
+      :key="entry.squareIds.toString()"
+    >
+      <label :for="'clue' + entry.squareIds.toString()">
+        <span v-for="squareId in entry.squareIds" :key="squareId">{{
+          values[squareId] || "_"
+        }}</span>
+        <input
+          :id="'clue' + entry.squareIds.toString()"
+          :value="clues[entry.squareIds.toString()]"
+          @input="setClue(entry, $event.target.value)"
+        />
+      </label>
+    </div>
   </div>
 </template>
 
@@ -117,6 +135,9 @@ export default {
     },
     removeSquare(square) {
       Vue.delete(this.squaresById, square.id);
+    },
+    setClue(entry, value) {
+      Vue.set(this.clues, entry.squareIds.toString(), value);
     }
   }
 };
