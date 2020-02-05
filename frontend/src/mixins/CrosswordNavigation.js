@@ -34,7 +34,7 @@ export default {
       return this.entriesBySquareId[this.activeSquare.id];
     },
     activeEntry() {
-      if (!this.activeSquareEntries) return false;
+      if (!this.activeSquareEntries) return undefined;
       return this.activeSquareEntries[this.activeEntryIndex];
     },
     indexInEntry() {
