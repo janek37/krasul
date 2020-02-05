@@ -1,5 +1,5 @@
 // assumes properties (data, computed or props):
-// width, height, squaresById, entriesBySquareId
+// width, height, squaresById, entries
 
 export default {
   data() {
@@ -19,6 +19,16 @@ export default {
     },
     hasFocus() {
       return Boolean(this.activeSquare.id);
+    },
+    entriesBySquareId() {
+      const entriesBySquareId = {};
+      for (let entry of this.entries) {
+        for (let squareId of entry.squareIds) {
+          if (!entriesBySquareId[squareId]) entriesBySquareId[squareId] = [];
+          entriesBySquareId[squareId].push(entry);
+        }
+      }
+      return entriesBySquareId;
     },
     activeSquareEntries() {
       return this.entriesBySquareId[this.activeSquare.id];

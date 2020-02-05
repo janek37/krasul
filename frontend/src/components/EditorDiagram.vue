@@ -69,27 +69,18 @@ export default {
       return blanks;
     },
 
-    entriesBySquareId() {
-      const entriesBySquareId = {};
+    entries() {
+      const entries = [];
       let currentEntry = [];
-
-      function setEntry() {
-        if (currentEntry.length > 1) {
-          const entry = { squareIds: currentEntry };
-          for (let squareId of currentEntry) {
-            if (!entriesBySquareId[squareId]) entriesBySquareId[squareId] = [];
-            entriesBySquareId[squareId].push(entry);
-          }
-        }
-        currentEntry = [];
-      }
 
       for (let x = 0; x < this.width; x++) {
         for (let y = 0; y <= this.height; y++) {
           if (y < this.height && this.squaresTable[x][y]) {
             currentEntry.push(this.squaresTable[x][y].id);
           } else {
-            setEntry();
+            if (currentEntry.length > 1)
+              entries.push({ squareIds: currentEntry });
+            currentEntry = [];
           }
         }
       }
@@ -98,11 +89,13 @@ export default {
           if (x < this.width && this.squaresTable[x][y]) {
             currentEntry.push(this.squaresTable[x][y].id);
           } else {
-            setEntry();
+            if (currentEntry.length > 1)
+              entries.push({ squareIds: currentEntry });
+            currentEntry = [];
           }
         }
       }
-      return entriesBySquareId;
+      return entries;
     }
   },
 

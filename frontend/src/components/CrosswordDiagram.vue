@@ -70,19 +70,17 @@ export default {
       }
       return blanks;
     },
-    entriesBySquareId() {
-      const entriesBySquareId = {};
+    entries() {
+      const entries = [];
       for (let rawEntry of this.rawEntries) {
         const squareIds = [];
         const entry = { clue: rawEntry.clue, squareIds: squareIds };
         for (let entrySquare of rawEntry.squares) {
           squareIds.push(entrySquare.id);
-          if (!entriesBySquareId[entrySquare.id])
-            entriesBySquareId[entrySquare.id] = [];
-          entriesBySquareId[entrySquare.id].push(entry);
         }
+        entries.push(entry);
       }
-      return entriesBySquareId;
+      return entries;
     }
   },
 
